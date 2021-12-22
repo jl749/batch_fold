@@ -1,0 +1,2 @@
+MBATCH_SIZE = 5
+EPOCHS = 10
