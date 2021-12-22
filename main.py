@@ -44,9 +44,10 @@ x = inputs
 
 batchNormInfo = []
 
-for i, layer in enumerate(model.layers[:-1]):
+count = 0
+for layer in model.layers[:-1]:
     if isinstance(layer, BatchNormalization):
-        batchNormInfo.append({'index': i, 'weights': layer.get_weights()})
+        batchNormInfo.append({'index': count, 'weights': layer.get_weights()})
         print('####################')
         print(layer.weights)
         print('####################')
@@ -54,17 +55,25 @@ for i, layer in enumerate(model.layers[:-1]):
         x = layer(x)
         # tmp = layer.weights
         # print(tmp, end='\n\n\n')
+    count += 1
 outputs = model.layers[-1](x)
 
 new_model = tf.keras.Model(inputs=inputs, outputs=outputs)
 new_model.summary()
 for tmp in batchNormInfo:
     index = tmp['index']
-    scale = tmp['weights'][2]  # batch_normalization/moving_mean
-    shift = tmp['weights'][3]  # batch_normalization/moving_variance
+    epsilon = 0.001
+    [gamma, beta, mean, var] = tmp['weights']  # batch_normalization/gamma
+    # batch_normalization / beta
+    # scale = tmp['weights'][2]  # batch_normalization/moving_mean
+    # shift = tmp['weights'][3]  # batch_normalization/moving_variance
 
     [w, b] = new_model.layers[index].get_weights()
-    print(b+shift)
-    new_model.layers[index].set_weights([np.matmul(w, np.tile(scale,(7,1))), b+shift])
+    x_hat = (w-mean)/(np.sqrt(var)+epsilon)
+    # print(x_hat)
+    # print('gamma:', gamma)
+    print(gamma*x_hat+beta)
+
+    new_model.layers[index].set_weights([gamma*x_hat+beta, b])
 
 print(new_model.predict([[[1, 0], [1, 0], [0, 1], [0, 0], [1, 1]]]))
