@@ -1,4 +1,5 @@
 venv
 xor_model
+xor_model_FOLDED
 .idea
 __pycache__/
