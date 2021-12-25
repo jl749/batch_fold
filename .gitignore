@@ -1,5 +1,6 @@
 venv
-xor_model
-xor_model_FOLDED
+xor_model*
+MNIST_model*
+MNIST_test_data.txt
 .idea
-__pycache__/
+__pycache__

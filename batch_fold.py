@@ -1,21 +1,23 @@
 from typing import List
 import tensorflow as tf
 from keras.layers import BatchNormalization, InputLayer
-import _PARMs
 import numpy as np
 import argparse
+import json
 
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-s", "--shape", nargs='+', type=int, required=True,
-                help="input shape without mini_batch size (mini_batch in _PARAMs.py)\n"
-                     "e.g. -s 255, 255")
+                help="input shape e.g. -s 255, 255")
 ap.add_argument("-i", "--input", required=True,
                 help="base path to model directory\n"
-                     "e.g. -i xor_model")
+                     "e.g. -i example/xor_model")
 ap.add_argument("-e", "--epsilon", type=float, default=0.0001,
                 help="epsilon value to be used for batch folding")
+ap.add_argument("-t", "--test", default=None,
+                help="test data to compare input model and batch folded model results\n"
+                     "e.g. -i example/MNIST_test_data.txt")
 args = vars(ap.parse_args())
 
 model = tf.keras.models.load_model(args['input'])
@@ -24,7 +26,7 @@ model.summary()
 
 epsilon: float = args['epsilon']
 input_shape: List[int] = [num for num in args['shape']]
-input_shape.insert(0, _PARMs.MBATCH_SIZE)
+# input_shape.insert(0, _PARMs.MBATCH_SIZE)
 
 inputs = tf.keras.Input(shape=tuple(input_shape))
 x = inputs
@@ -58,3 +60,11 @@ for tmp in batchNormInfo:
     new_model.layers[index].set_weights([w*gamma/np.sqrt(var+epsilon), beta+(b-mean)*gamma/np.sqrt(var+epsilon)])
 
 new_model.save(args['input']+'_FOLDED')
+
+if args['test']:
+    with open(args['test']) as fs:
+        test_data = json.load(fs)
+        # print('before: \n', np.argmax(model.predict(test_data), axis=1))
+        # print('after: \n', np.argmax(new_model.predict(test_data), axis=1))
+        print('before: \n', model.predict(test_data))
+        print('after: \n', new_model.predict(test_data))

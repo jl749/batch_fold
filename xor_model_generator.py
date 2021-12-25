@@ -2,9 +2,11 @@ import numpy as np
 import tensorflow as tf
 from keras.layers import Dense, BatchNormalization
 import _PARMs
+import json
 
-np.random.seed(0)
-tf.random.set_seed(1)
+
+np.random.seed(_PARMs.NP_SEED)
+tf.random.set_seed(_PARMs.TF_SEED)
 
 
 def logical_xor(a: int, b: int):
@@ -26,9 +28,10 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01),
 
 history = model.fit(x, y, epochs=_PARMs.EPOCHS)
 
-# print('x: ', '[[[1, 0], [1, 0], [0, 1], [0, 0], [1, 1]]]')
-# print('y: ', model.predict([[[1, 0], [1, 0], [0, 1], [0, 0], [1, 1]]]))
+print('input: ', '[[[1, 0], [1, 0], [0, 1], [0, 0], [1, 1]]]')
+print('predicted_y: \n', model.predict([[[1, 0], [1, 0], [0, 1], [0, 0], [1, 1]]]))
 
-test_hat = model.predict([_PARMs.xor_test_data]).tolist()[0]
-print(list(zip(_PARMs.xor_test_data, test_hat)))
-model.save('xor_model')
+# save model and smaple test dataset
+model.save('example/xor_model')
+with open('example/XOR_test_data.txt', 'w') as fs:
+    fs.write(json.dumps([[[1, 0], [1, 0], [0, 1], [0, 0], [1, 1]]]))
