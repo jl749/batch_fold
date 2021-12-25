@@ -1,5 +1,7 @@
 venv
 xor_model*
+xor_model
+XOR_test_data.txt
 MNIST_model*
 MNIST_test_data.txt
 .idea

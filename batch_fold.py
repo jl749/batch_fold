@@ -64,7 +64,7 @@ new_model.save(args['input']+'_FOLDED')
 if args['test']:
     with open(args['test']) as fs:
         test_data = json.load(fs)
-        # print('before: \n', np.argmax(model.predict(test_data), axis=1))
-        # print('after: \n', np.argmax(new_model.predict(test_data), axis=1))
-        print('before: \n', model.predict(test_data))
-        print('after: \n', new_model.predict(test_data))
+        print('before: \n', np.argmax(model.predict(test_data), axis=1))
+        print('after: \n', np.argmax(new_model.predict(test_data), axis=1))
+        # print('before: \n', model.predict(test_data))
+        # print('after: \n', new_model.predict(test_data))

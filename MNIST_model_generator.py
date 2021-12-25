@@ -32,8 +32,12 @@ train_y = to_categorical(train_y)
 test_y = to_categorical(test_y)
 
 model = tf.keras.Sequential([
-    Conv2D(filters=8, kernel_size=(5, 5), strides=(1, 1),
+    Conv2D(filters=4, kernel_size=(10, 10), strides=(1, 1),
                   padding='same', activation='relu', input_shape=(28, 28, 1)),
+    BatchNormalization(),
+    MaxPooling2D(pool_size=(2, 2)),
+    Conv2D(filters=8, kernel_size=(5, 5), strides=(1, 1),
+                  padding='same', activation='relu'),
     BatchNormalization(),
     MaxPooling2D(pool_size=(2, 2)),
     Flatten(),

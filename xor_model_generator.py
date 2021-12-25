@@ -24,7 +24,7 @@ model = tf.keras.Sequential([
     Dense(units=1, activation='sigmoid')
 ])
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01),
-              loss='mse')
+              loss='mse', metrics=['accuracy'])
 
 history = model.fit(x, y, epochs=_PARMs.EPOCHS)
 
